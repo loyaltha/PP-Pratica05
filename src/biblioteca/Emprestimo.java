@@ -2,32 +2,34 @@ package biblioteca;
 
 public class Emprestimo implements Imprimivel {
     private Usuario usuario;
-    private Livro livro;
+    private ItemEmprestavel item;
+    private ServicoNotificacao notificador;
     private boolean ativo;
 
-    public Emprestimo(Usuario usuario, Livro livro) {
+    public Emprestimo(Usuario usuario, ItemEmprestavel item, ServicoNotificacao notificador) {
         this.usuario = usuario;
-        this.livro = livro;
+        this.item = item;
+        this.notificador = notificador;
         this.ativo = true;
     }
 
     // Método responsável por mediar o aluguel
-    public static Emprestimo registrar(Usuario usuario, Livro livro) {
+    public static Emprestimo registrar(Usuario usuario, ItemEmprestavel item, ServicoNotificacao notificador) {
         if (usuario.getEmprestimoAtivo() != null) {
-            System.out.println(usuario.getNome() + " já possui o livro '" + usuario.getEmprestimoAtivo().getLivro().getTitulo() + "' em mãos.");
+            notificador.notificar(usuario.getNome() + " já possui o item '" + usuario.getEmprestimoAtivo().getItem().getTitulo() + "' em mãos.");
             return null;
         }
-        if (!livro.getDisponivel()) {
-            System.out.println("O livro '" + livro.getTitulo() + "' não está disponível no momento.");
+        if (!item.getDisponivel()) {
+            notificador.notificar("O item '" + item.getTitulo() + "' não está disponível no momento.");
             return null;
         }
 
-        livro.setDisponivel(false);
-        Emprestimo novoEmprestimo = new Emprestimo(usuario, livro);
+        item.setDisponivel(false);
+        Emprestimo novoEmprestimo = new Emprestimo(usuario, item, notificador);
         usuario.setEmprestimoAtivo(novoEmprestimo);
 
-        System.out.println(usuario.getNome() + " alugou o livro: " + livro.getTitulo());
-        System.out.println("Prazo para devolução: " + usuario.obterDiasDevolucao() + " dias.");
+        notificador.notificar(usuario.getNome() + " alugou o item (" + item.getTipo() + "): " + item.getTitulo());
+        notificador.notificar("Prazo para devolução: " + usuario.obterDiasDevolucao() + " dias.");
         return novoEmprestimo;
     }
 
@@ -36,31 +38,31 @@ public class Emprestimo implements Imprimivel {
         if (!this.ativo) {
             return false;
         }
-        System.out.println(usuario.getNome() + " RENOVOU o livro: " + livro.getTitulo());
-        System.out.println("Novo prazo para devolução: " + usuario.obterDiasDevolucao() + " dias a partir de hoje.");
+        notificador.notificar(usuario.getNome() + " RENOVOU o item: " + item.getTitulo());
+        notificador.notificar("Novo prazo para devolução: " + usuario.obterDiasDevolucao() + " dias a partir de hoje.");
         return true;
     }
 
     // Método responsável por mediar a devolução
     public void finalizar() {
         if (!this.ativo) {
-            System.out.println("Este empréstimo já foi encerrado.");
+            notificador.notificar("Este empréstimo já foi encerrado.");
             return;
         }
-        this.livro.setDisponivel(true);
+        this.item.setDisponivel(true);
         this.usuario.setEmprestimoAtivo(null);
         this.ativo = false;
-        System.out.println(this.usuario.getNome() + " devolveu o livro: " + this.livro.getTitulo());
+        notificador.notificar(this.usuario.getNome() + " devolveu o item: " + this.item.getTitulo());
     }
 
     @Override
     public void imprimirDados() {
         System.out.println("EMPRÉSTIMO | Usuário: " + usuario.getNome() + 
-                           " | Livro: " + livro.getTitulo() + 
+                           " | Item (" + item.getTipo() + "): " + item.getTitulo() + 
                            " | Status Ativo: " + (ativo ? "Sim" : "Não"));
     }
 
     public Usuario getUsuario() { return usuario; }
-    public Livro getLivro() { return livro; }
+    public ItemEmprestavel getItem() { return item; }
     public boolean isAtivo() { return ativo; }
 }

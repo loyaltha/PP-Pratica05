@@ -1,6 +1,6 @@
 package biblioteca;
 
-public class Enciclopedia extends Imprimivel, ItemAcervo {
+public class Enciclopedia implements Imprimivel, ItemAcervo {
     private String titulo;
     private int volume;
 
