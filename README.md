@@ -1,6 +1,6 @@
-# Sistema de Biblioteca - Prática 04 (SOLID - LSP)
+# Sistema de Biblioteca - Prática 05 (SOLID - DIP)
 
 Este repositório contém a evolução do sistema de gerenciamento de biblioteca em Java. 
 
 **Objetivo desta prática:** 
-Aplicar o **Princípio da Substituição de Liskov (LSP)** do SOLID, garantindo que as subclasses e implementações de interfaces (como `Livro`, `Revista` e a nova `Enciclopedia`) possam ser substituídas sem quebrar o comportamento esperado da aplicação. A arquitetura separa itens de acervo de itens emprestáveis para evitar o lançamento de exceções inesperadas.
+Aplicar o **Princípio da Inversão da Dependência (DIP)** do SOLID. O código foi refatorado para que os módulos de alto nível (classes de negócio como Emprestimo e Usuario) não dependam de implementações concretas e de baixo nível (como o console para imprimir mensagens), mas sim de abstrações, utilizando a interface `ServicoNotificacao`.
